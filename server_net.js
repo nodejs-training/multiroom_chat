@@ -12,13 +12,13 @@ channel.subscriptions = {};
 channel.on('join', function(id, client) {
 	this.clients[id] = client;
 	this.subscriptions[id] = function(senderId, msg) {
-
 		// Ignore data directly broadcasted by the user
 		if (senderId != id) {
 			this.clients[id].write(msg);
 		}
 	}
 	// Add a listener, specific to the current user, for the broadcast event
+	// this.on('broadcast', this.subscriptions[id]);
 	this.on('broadcast', this.subscriptions[id]);
 
 	// Add a listener for leave event
@@ -32,14 +32,12 @@ channel.on('join', function(id, client) {
 
 net.createServer(function(client) {
 	var id = client.remoteAddress + ':' + client.remotePort;
-	client.on('connect', function() {
 
-		/**
-		 * Emiit a join event when a user connects to the server, specifying the
-		 * user ID and client object
-		 */
-		channel.emit('join', id, client);
-	});
+	/**
+	 * Emiit a join event when a user connects to the server, specifying the
+	 * user ID and client object
+	 */
+	channel.emit('join', id, client);
 	client.on('data', function(data) {
 
 		/**
